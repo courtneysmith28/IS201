@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Disney Riddle Quest 🏰✨</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Baloo+2&display=swap');
+    body {
+      font-family: 'Baloo 2', cursive;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(to bottom, #2a1a5e, #4b2e83);
+      background-size: cover;
+      background-attachment: fixed;
+      color: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .game-container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+      border: 3px solid gold;
+      position: relative;
+      z-index: 10;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      color: #ffe066;
+      text-shadow: 2px 2px #000;
+    }
+
+    .riddle {
+      font-size: 1.3em;
+      margin: 20px 0;
+    }
+
+    .double-points {
+      color: #ff6ec7;
+      text-shadow: 0 0 10px #ff6ec7;
+      font-weight: bold;
+      font-size: 1.1em;
+      animation: glow 1s infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 5px #ff6ec7;
+      }
+      to {
+        text-shadow: 0 0 15px #ff6ec7, 0 0 20px #ff6ec7;
+      }
+    }
+
+    input {
+      padding: 10px;
+      width: 80%;
+      border: 2px solid #ffe066;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      font-size: 1em;
+      background-color: #fff8dc;
+      color: #000;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #ffe066;
+      border: none;
+      border-radius: 10px;
+      color: #000;
+      font-weight: bold;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #ffcc00;
+    }
+
+    .result {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .win {
+      color: #a3f7bf;
+    }
+
+    .lose {
+      color: #ff8787;
+    }
+
+    .scoreboard {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      font-size: 1.1em;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .start-button {
+      margin-top: 20px;
+    }
+    
+    nav {
+      width: 100%;
+      background-color: #2a1a5e;
+      padding: 10px 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+    }
+
+    nav a {
+      color: #ffe066;
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.2em;
+      text-decoration: none;
+    }
+
+    /* Starry Background Animation */
+    .starry-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://cdn.pixabay.com/photo/2018/10/19/13/59/sky-3755249_960_720.jpg') repeat;
+      opacity: 0.2;
+      z-index: 0;
+      animation: moveStars 60s linear infinite;
+    }
+
+    @keyframes moveStars {
+      from {
+        background-position: 0 0;
+      }
+      to {
+        background-position: 1000px 1000px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav>
+    <a href="scratch.html">← Back to Home</a>
+  </nav>
+
+  <div class="starry-bg"></div>
+
+  <!-- Main Game Content -->
+  <div class="game-container" style="margin-top: 60px;">
+    <h1>✨ Disney Riddle Quest ✨</h1>
+
+    <div class="riddle" id="riddle">Press Start to Begin!</div>
+    <div id="bonus-indicator" class="double-points hidden">🔥 DOUBLE POINTS ROUND! 🔥</div>
+
+    <input type="text" id="answer" class="hidden" placeholder="Your magical guess..." />
+    <br />
+    <button id="submit-btn" class="hidden" onclick="checkAnswer()">Submit Answer</button>
+    <div class="result" id="result"></div>
+
+    <div class="scoreboard">
+      <div>⏱️ Time: <span id="timer">45</span>s</div>
+      <div>🏆 Score: <span id="score">0</span></div>
+      <div>👑 High Score: <span id="high-score">0</span></div>
+    </div>
+
+    <button class="start-button" id="start-btn" onclick="startGame()">Start Game</button>
+  </div>
+
+  <script>
+    const riddles = [
+      {
+        question: "Who has long golden hair and was locked in a tower?",
+        answer: "rapunzel",
+        double: false
+      },
+      {
+        question: "This mouse wears red shorts and has a dog named Pluto.",
+        answer: "mickey",
+        double: true
+      },
+      {
+        question: "I'm a snowman who loves warm hugs. Who am I?",
+        answer: "olaf",
+        double: false
+      },
+      {
+        question: "This princess left her glass slipper at the ball.",
+        answer: "cinderella",
+        double: true
+      },
+      {
+        question: "Hakuna Matata is my motto. Who am I?",
+        answer: "timon",
+        double: false
+      },
+      {
+        question: "He never grows up and lives in Neverland.",
+        answer: "peter pan",
+        double: false
+      },
+      {
+        question: "She has a magical ice palace and sings 'Let It Go'.",
+        answer: "elsa",
+        double: true
+      },
+      { questions: "He eats five dozen eggs every day",
+      answer: "gaston",
+      double: true
+
+      },
+    ];
+
+    const hardRiddles = [
+      {
+        question: "She traveled across the waters to restore the heart of Tafiti",
+        answer: "moana",
+        double: true
+      },
+      {
+        question: "A princess with a pet tiger and a magic carpet. Who am I?",
+        answer: "jasmine",
+        double: true
+      },
+      {
+        question: "The villain with a blue face who rules over the underworld. Who am I?",
+        answer: "hades",
+        double: true
+      }
+    ];
+
+    let currentRiddle = {};
+    let usedIndices = [];
+    let score = 0;
+    let highScore = localStorage.getItem('highScore') || 0;
+    let timer = 45;
+    let countdown;
+    let isBonusRound = false;
+
+    document.getElementById('high-score').textContent = highScore;
+
+    function startGame() {
+      score = 0;
+      timer = 45;
+      usedIndices = [];
+      document.getElementById('score').textContent = score;
+      document.getElementById('timer').textContent = timer;
+      document.getElementById('result').textContent = '';
+      document.getElementById('start-btn').style.display = 'none';
+      document.getElementById('answer').classList.remove('hidden');
+      document.getElementById('submit-btn').classList.remove('hidden');
+
+      loadRiddle();
+      countdown = setInterval(() => {
+        timer--;
+        document.getElementById('timer').textContent = timer;
+        if (timer <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function endGame() {
+      clearInterval(countdown);
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('highScore', highScore);
+      }
+      document.getElementById('high-score').textContent = highScore;
+      document.getElementById('riddle').textContent = `Time's up! Your final score is ${score} 🎉`;
+      document.getElementById('answer').classList.add('hidden');
+      document.getElementById('submit-btn').classList.add('hidden');
+      document.getElementById('bonus-indicator').classList.add('hidden');
+      document.getElementById('start-btn').style.display = 'inline-block';
+    }
+
+    function loadRiddle() {
+      if (score >= 10 && !isBonusRound) {
+        isBonusRound = true;
+        document.getElementById('bonus-indicator').classList.remove('hidden');
+        loadBonusRiddle();
+      } else {
+        let index;
+        do {
+          index = Math.floor(Math.random() * riddles.length);
+        } while (usedIndices.includes(index));
+
+        usedIndices.push(index);
+        currentRiddle = riddles[index];
+        document.getElementById('riddle').textContent = currentRiddle.question;
+        document.getElementById('answer').value = '';
+        document.getElementById('result').textContent = '';
+
+        if (currentRiddle.double) {
+          document.getElementById('bonus-indicator').classList.remove('hidden');
+        } else {
+          document.getElementById('bonus-indicator').classList.add('hidden');
+        }
+      }
+    }
+
+    function loadBonusRiddle() {
+      let index = Math.floor(Math.random() * hardRiddles.length);
+      currentRiddle = hardRiddles[index];
+      document.getElementById('riddle').textContent = currentRiddle.question;
+      document.getElementById('bonus-indicator').classList.add('hidden');
+    }
+
+    function checkAnswer() {
+      const userAnswer = document.getElementById('answer').value.trim().toLowerCase();
+      const resultDiv = document.getElementById('result');
+
+      if (userAnswer === currentRiddle.answer) {
+        const points = isBonusRound ? 3 : (currentRiddle.double ? 2 : 1);
+        score += points;
+        document.getElementById('score').textContent = score;
+        resultDiv.innerHTML = `✨ Correct! +${points} point${points > 1 ? 's' : ''}! ✨`;
+        resultDiv.className = "result win";
+        setTimeout(loadRiddle, 1000);
+      } else {
+        resultDiv.innerHTML = "❌ Try again!";
+        resultDiv.className = "result lose";
+      }
+    }
+  </script>
+</body>
+</html>

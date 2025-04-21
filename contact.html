@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Disney Riddle Quest 🏰✨</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #fceabb, #f8b500);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .game-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+      color: #d23669;
+    }
+
+    .riddle {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+
+    input {
+      padding: 10px;
+      width: 80%;
+      border: 2px solid #f8b500;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #f8b500;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #d99a00;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    .win {
+      color: green;
+    }
+
+    .lose {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>✨ Disney Riddle Quest ✨</h1>
+    <div class="riddle" id="riddle">Loading riddle...</div>
+    <input type="text" id="answer" placeholder="Your magical guess..." />
+    <br />
+    <button onclick="checkAnswer()">Submit Answer</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const riddles = [
+      {
+        question: "Who has long golden hair and was locked in a tower?",
+        answer: "rapunzel"
+      },
+      {
+        question: "This mouse wears red shorts and has a dog named Pluto.",
+        answer: "mickey"
+      },
+      {
+        question: "I'm a snowman who loves warm hugs. Who am I?",
+        answer: "olaf"
+      },
+      {
+        question: "This princess left her glass slipper at the ball.",
+        answer: "cinderella"
+      },
+      {
+        question: "Hakuna Matata is my motto. Who am I?",
+        answer: "timon"
+      }
+    ];
+
+    let currentRiddle = {};
+    let usedIndices = [];
+
+    function loadRiddle() {
+      if (usedIndices.length === riddles.length) {
+        document.getElementById('riddle').textContent = "You've answered all the riddles! 🎉";
+        document.getElementById('answer').style.display = 'none';
+        document.querySelector('button').style.display = 'none';
+        return;
+      }
+
+      let index;
+      do {
+        index = Math.floor(Math.random() * riddles.length);
+      } while (usedIndices.includes(index));
+
+      usedIndices.push(index);
+      currentRiddle = riddles[index];
+      document.getElementById('riddle').textContent = currentRiddle.question;
+      document.getElementById('answer').value = '';
+      document.getElementById('result').textContent = '';
+    }
+
+    function checkAnswer() {
+      const userAnswer = document.getElementById('answer').value.trim().toLowerCase();
+      const resultDiv = document.getElementById('result');
+      
+      if (userAnswer === currentRiddle.answer) {
+        resultDiv.innerHTML = "✨ Correct! On to the next riddle! ✨";
+        resultDiv.className = "result win";
+        setTimeout(loadRiddle, 2000);
+      } else {
+        resultDiv.innerHTML = "Oops! Try again 🐭";
+        resultDiv.className = "result lose";
+      }
+    }
+
+    // Start game
+    loadRiddle();
+  </script>
+</body>
+</html>
